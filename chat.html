@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .logo {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 40px;
+            margin-right: 15px;
+        }
+        
+        nav {
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover {
+            background-color: #555;
+        }
+        
+        nav a.active {
+            background-color: #4CAF50;
+        }
+        
+        .shortdes {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 30px;
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .chat-header img {
+            height: 30px;
+            margin-right: 10px;
+        }
+        
+        .chat-header h2 {
+            color: #4CAF50;
+            font-size: 20px;
+        }
+        
+        .chat-box {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+            margin-bottom: 20px;
+            height: 400px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        
+        .user-message {
+            justify-content: flex-end;
+        }
+        
+        .bot-message {
+            justify-content: flex-start;
+        }
+        
+        .message-content {
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 70%;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            line-height: 1.4;
+        }
+        
+        .user-message .message-content {
+            background-color: #4CAF50;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message .message-content {
+            background-color: #f1f1f1;
+            color: #333;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .input-area {
+            display: flex;
+            border: 1px solid #e0e0e0;
+            border-radius: 24px;
+            overflow: hidden;
+            padding: 5px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        #user-input {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: transparent;
+        }
+        
+        #send-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #send-button:hover {
+            background-color: #45a049;
+        }
+        
+        #send-button:after {
+            content: "➤";
+        }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: auto;
+        }
+        
+        /* Typing indicator animation */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .typing-indicator .dot {
+            height: 8px;
+            width: 8px;
+            margin: 0 1px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-indicator .dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .typing-indicator .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .chat-container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            nav {
+                flex-wrap: wrap;
+            }
+            
+            nav a {
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="images/snake_icon.png" alt="Snake Game Icon">
+        <h1>Snake Game Chatbot</h1>
+    </div>
+    <nav> 
+        <a href="index.html">Play</a>
+        <a href="prod.html">Products</a>
+        <a href="com.html">Community</a>
+        <a href="his.html">History</a>
+        <a href="chat.html" class="active">Chatbot</a>
+    </nav>
+    <div class="shortdes">
+        <p>Have questions about Snake Game? Chat with our friendly assistant!</p>
+    </div>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="images/snake_icon.png" alt="Snake Assistant">
+            <h2>Snake Game Assistant</h2>
+        </div>
+        <div class="chat-box" id="chat-box">
+            <div class="message bot-message">
+                <div class="message-content">
+                    Hi there! I'm your friendly Snake Game assistant. Ask me anything about snake games, how to play, tips and tricks, or the history of snake games!
+                </div>
+            </div>
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="message-content">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message here...">
+            <button id="send-button"></button>
+        </div>
+    </div>
+    <footer>
+        <p>Created by Phuc Lam Vo - N11912839</p>
+    </footer>
+    
+    <script src="chat.js"></script>
+</body>
+</html>
